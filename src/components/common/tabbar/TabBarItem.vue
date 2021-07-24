@@ -1,0 +1,71 @@
+<template>
+  <div class="tab-bar-item" @click="itemClick">
+<!--    <img src="../../assets/img/tabbar/home.svg" alt="">-->
+<!--    <div>首页</div>-->
+
+    <!--建议在slot,外面包装一层属性，然后在div上设置css属性。防止失效-->
+    <div v-if="!isActive"><slot name="item-icon"></slot></div>
+    <div v-else><slot name="item-icon-active"></slot></div>
+
+<!--    <div :class="{active: isActive}" >-->
+<!--      <slot name="item-text"></slot>-->
+<!--    </div>-->
+
+      <div :style="activeStyle">
+        <slot name="item-text"></slot>
+      </div>
+
+    <slot></slot>
+  </div>
+</template>
+
+<script>
+    export default {
+        name: "TabBarItem",
+        props: {
+            path: String,
+            activeColor: {
+                type: String,
+                default: 'red'
+            }
+        },
+        data(){
+            return {
+                //isActive: false
+            }
+        },
+        computed: {
+            isActive(){
+              //$route当前活跃的路由
+              return this.$route.path.indexOf(this.path) !== -1
+            },
+            activeStyle(){
+                return this.isActive ? {color: this.activeColor} : {}
+            }
+        },
+        methods: {
+            itemClick() {
+                this.$router.replace(this.path)
+            }
+        }
+    }
+</script>
+
+<style scoped>
+  .tab-bar-item {
+    flex: 1;
+    text-align: center;
+    height: 49px;
+    font-size: 14px;
+  }
+  .tab-bar-item img {
+    width: 24px;
+    height: 24px;
+    margin-top: 3px;
+    vertical-align: middle;
+    margin-top: 2px;
+  }
+  /*.active {*/
+  /*  color: red;*/
+  /*}*/
+</style>
