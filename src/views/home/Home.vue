@@ -5,9 +5,10 @@
     <recommend-view :recommends="recommends"></recommend-view>
     <feature-view></feature-view>
 
-    <tab-control class="tab-control" :titles="['流行','新款','精选']"></tab-control>
+    <tab-control class="tab-control" :titles="['流行','新款','精选']"
+    @tabClick="tabClick"></tab-control>
 
-    <goods-list :goods="goods['pop'].list"></goods-list>
+    <goods-list :goods="showGoods"></goods-list>
 
 <!--    ul>li{列表$}*100-->
     <ul>
@@ -156,7 +157,14 @@
             'pop': {page: 0, list:[]},
             'new': {page: 0, list:[]},
             'sell': {page: 0, list:[]},
-          }
+          },
+          currentType: "pop"
+        }
+      },
+      computed: {
+        // 上面的那一串太长了。搞一个计算属性
+        showGoods() {
+          return this.goods[this.currentType].list
         }
       },
       // 组件创建完毕
@@ -170,6 +178,28 @@
           this.getHomeGoods('sell')
       },
     methods: {
+      /**
+       * 事件监听相关的方法
+       */
+      tabClick(index) {
+
+        switch(index){
+          case 0:
+            this.currentType = 'pop'
+            break
+          case 1:
+            this.currentType = 'new'
+            break
+          case 2:
+            this.currentType = 'sell'
+            break
+        }
+
+      },
+
+      /**
+       * 网络请求相关的方法
+       */
       getHomeMultidata(){
         getHomeMultidata().then(res => {
           // this.result = res;
