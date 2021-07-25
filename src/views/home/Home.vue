@@ -12,7 +12,6 @@
       name: "Home",
       components: {
         NavBar
-
       }
     }
 </script>
