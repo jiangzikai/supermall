@@ -6,6 +6,9 @@
     <feature-view></feature-view>
 
     <tab-control class="tab-control" :titles="['流行','新款','精选']"></tab-control>
+
+    <goods-list :goods="goods['pop'].list"></goods-list>
+
 <!--    ul>li{列表$}*100-->
     <ul>
       <li>列表1</li>
@@ -121,7 +124,12 @@
   import NavBar from "components/common/navbar/NavBar";
   import TabControl from "components/content/tabControl/TabControl";
 
-  import {getHomeMultidata} from "network/home";
+  import GoodsList from "components/content/goods/GoodsList";
+
+  import {
+    getHomeMultidata,
+    getHomeGoods
+  } from "network/home";
 
   // import Swiper from "components/common/swiper/Swiper";
   // import SwiperItem from "components/common/swiper/SwiperItem";
@@ -136,26 +144,48 @@
         // SwiperItem
         HomeSwiper,
         RecommendView,
-        FeatureView
+        FeatureView,
+        GoodsList
       },
       data() {
         return {
           // result: null
           banners: [],
-          recommends: []
+          recommends: [],
+          goodsList: {
+            'pop': {page: 0, list:[]},
+            'new': {page: 0, list:[]},
+            'sell': {page: 0, list:[]},
+          }
         }
       },
       // 组件创建完毕
       created() {
           // 1.请求多个数据
           // this 箭头函数向上找this,就是这里的this,这个this就是vue对象
-          getHomeMultidata().then(res => {
-              // console.log(res);
-              // this.result = res;
-            this.banners = res.data.banner.list;
-            this.recommends = res.data.recommend.list;
-          })
+          this.getHomeMultidata()
+          // 2.请求商品数据
+          this.getHomeGoods('pop')
+          this.getHomeGoods('new')
+          this.getHomeGoods('sell')
+      },
+    methods: {
+      getHomeMultidata(){
+        getHomeMultidata().then(res => {
+          // this.result = res;
+          this.banners = res.data.banner.list;
+          this.recommends = res.data.recommend.list;
+        })
+      },
+      getHomeGoods(type){
+        const page = this.goodsList[type].page +1
+        getHomeGoods(type,page).then(res => {
+          this.goodsList[type].list.push(...res.data.list);
+          this.goodsList[type].page +=1;
+
+        })
       }
+    }
   }
 </script>
 
